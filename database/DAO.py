@@ -52,3 +52,43 @@ class DAO():
             cursor.close()
             cnx.close()
         return result
+
+    @staticmethod
+    def get_all_years():
+        cnx = DBConnect.get_connection()
+        result = []
+        if cnx is None:
+            print("Connessione fallita")
+        else:
+            cursor = cnx.cursor(dictionary=True)
+            query = """select *
+                       from sighting s
+                       order by `datetime` asc """
+            cursor.execute(query)
+
+            for row in cursor:
+                result.append(Sighting(**row))
+            cursor.close()
+            cnx.close()
+        return result
+
+    @staticmethod
+    def get_filter_sightings(shape, year):
+        cnx = DBConnect.get_connection()
+        result = []
+        if cnx is None:
+            print("Connessione fallita")
+        else:
+            cursor = cnx.cursor(dictionary=True)
+            query = """select *
+                        from sighting s 
+                        where shape = %s
+                        and year(`datetime`) = %s"""
+
+            cursor.execute(query, (shape, year, ))
+
+            for row in cursor:
+                result.append(Sighting(**row))
+            cursor.close()
+            cnx.close()
+        return result
